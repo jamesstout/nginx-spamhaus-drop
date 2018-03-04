@@ -23,7 +23,7 @@ function print_usage() {
 ## Get the drop list using cURL.
 ## $1: the list URI.
 function get_drop_list() {
-    $CURL -s -O $1
+    $CURL -s -O "$1"
 }
 
 ## Get the expire date in UNIX epoch format.
