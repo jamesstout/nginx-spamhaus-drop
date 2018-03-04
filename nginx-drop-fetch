@@ -29,13 +29,21 @@ function get_drop_list() {
 ## Get the expire date in UNIX epoch format.
 ## $1: the list file.
 function get_list_expire_date() {
-    echo $(date --date="$(sed -n 's/^.*Expires:\(.*\)$/\1/p' $1)" '+%s')
+    if ! [[ "$OSTYPE" =~ ^darwin ]]; then
+        date --date="$(sed -n 's/^.*Expires:\(.*\)$/\1/p' "$1")" '+%s'
+    else
+        date -j -f "%a %d %b %Y %T %Z" "$(sed -n 's/^.*Expires:\(.*\)$/\1/p' "$1" |  sed 's/,//g' | sed -e 's/^[[:space:]]*//')" "+%s"
+    fi
 }
 
 ## Get the list date.
 ## $1: the list file.
 function get_list_date() {
-    echo $(date --date="$(sed -n 's/^.*Last-Modified:\(.*\)$/\1/p' $1)" '+%s')
+    if ! [[ "$OSTYPE" =~ ^darwin ]]; then
+        date --date="$(sed -n 's/^.*Last-Modified:\(.*\)$/\1/p' "$1")" '+%s'
+    else
+        date -j -f "%a %d %b %Y %T %Z" "$(sed -n 's/^.*Last-Modified:\(.*\)$/\1/p' "$1" |  sed 's/,//g' | sed -e 's/^[[:space:]]*//')" "+%s"
+    fi
 }
 
 ## Format the list according to Nginx geo module format.
