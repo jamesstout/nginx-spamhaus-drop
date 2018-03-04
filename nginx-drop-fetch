@@ -9,10 +9,12 @@ SCRIPTNAME=${0##*/}
 CURL=$(command -v curl) || exit 0
 
 ## The lists URIs and respective filenames.
-DROP_URI=http://www.spamhaus.org/drop/drop.txt
+DROP_URI=https://www.spamhaus.org/drop/drop.txt
 DROP_FILENAME=$(basename $DROP_URI)
-EDROP_URI=http://www.spamhaus.org/drop/edrop.txt
+EDROP_URI=https://www.spamhaus.org/drop/edrop.txt
 EDROP_FILENAME=$(basename $EDROP_URI)
+DROP6_URI=https://www.spamhaus.org/drop/dropv6.txt
+DROP6_FILENAME=$(basename $DROP6_URI)
 
 function print_usage() {
     echo "Usage: $SCRIPTNAME [output file]"
@@ -85,6 +87,8 @@ if [ ! -f $OUTPUT_FILE ]; then
     print_added_lines $DROP_FILENAME
     process_lists $OUTPUT_FILE $EDROP_FILENAME $EDROP_URI "append"
     print_added_lines $EDROP_FILENAME
+    process_lists $OUTPUT_FILE $DROP6_FILENAME $DROP6_URI "append"
+    print_added_lines $DROP6_FILENAME
     WRITTEN_FILE="yes"
 fi
 
@@ -100,6 +104,12 @@ fi
 if [ "$(get_list_expire_date $EDROP_FILENAME)" -lt "$(date '+%s')" ]; then
     process_lists $OUTPUT_FILE $EDROP_FILENAME $EDROP_URI "append"
     print_added_lines $EDROP_FILENAME
+    WRITTEN_FILE="yes"
+fi
+
+if [ "$(get_list_expire_date $DROP6_FILENAME)" -lt "$(date '+%s')" ]; then
+    process_lists $OUTPUT_FILE $DROP6_FILENAME $DROP6_URI "append"
+    print_added_lines $DROP6_FILENAME
     WRITTEN_FILE="yes"
 fi
 
